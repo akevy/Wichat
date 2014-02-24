@@ -274,7 +274,7 @@
                                            $ff = quchu($f);
                                            $bb= quchu($b);$ddd= quchu($dd);$fff= quchu($ff);
                                            if($aa!=$type_code){
-                                                $weObj->text("亲，您搜的好高端，小墨墨现在还搜不到呢，好桑心~ /:P-(")->reply();
+                                                $weObj->text("亲，您搜索的代码现在数据库中还无法匹配，我们根据您的输入随时更新数据库，以为您提供更好的服务/::)")->reply();
                                            }else{
                                                 $text = "【".$aa."】\n".$bb."\n\n".$c.$ddd."\n\n".$e.$fff;
                                                 $weObj->text($text)->reply();
