@@ -189,6 +189,7 @@
                                 $weObj->text($text_back)->reply();
                             }
                             
+                          
                             /*数据库查询*/
                             $ret_a = mysql_query($sql_a, $link);
                             while ($row_a = mysql_fetch_assoc($ret_a)) {
@@ -204,7 +205,14 @@
                                 $contact = $row_a['contact'];
                             }
                             if($error_code!=''){   
-                                /*如果数据库中存在则返回内容*/
+                                  /*如果数据库中存在则返回内容*/
+                                  /*
+                            	   *查询出数据的情况下，记录状态A
+                            	   */
+                            $sql_insert = "insert into `user_analysis`(id,content,time,category) values(null,'$type_code1',now(),'A')";
+                            mysql_query($sql_insert, $link);
+                                
+                                
                                 $text_code = "【".$error_code."】";			
                                 if($sub_code1 !='' && $sub_code2 !=''){
                                     $text_sub_code = "Sub_code:internal error code, arguments:【".$sub_code1."】,【".$sub_code2."】\n";
@@ -244,10 +252,18 @@
                                 }						
                                 $text_back = $text_code."\n\n".$text_sub_code.$text_description."\n\n".$text_cause."\n\n".$text_action."\n\n".$text_db_version.$text_comment."\n\n".$text_reference.$text_contact;
                                 $weObj->text($text_back)->reply();
-                            }else{                            
+                            }else{
+                            
+                               /*
+                            	*如果数据库中没有查询到，用户输入的为中文，则记录状态B
+                            	*/
+                            $sql_insert1 = "insert into `user_analysis`(id,content,time,category) values(null,'$type_code1',now(),'B')";
+                            mysql_query($sql_insert, $link);
+                            	
                                 /*如果数据库中不存在则进行抓取*/
                                 if (preg_match("/[\x7f-\xff]/", $type_code1)) { 
-                                    $weObj->text("亲，您输入的字符包含中文，墨墨无法匹配到正确的错误代码~ /::(")->reply(); 
+                                    $weObj->text("亲，您输入的字符包含中文，墨墨无法匹配到正确的错误代码~ /::(")->reply();
+                            
                                 }else{ 
                                     $url = "http://".$type_code1.".ora-code.com"; 
                                     $opts = array(   
@@ -260,6 +276,9 @@
                                     $contents = @file_get_contents($url,false,$context); 
             
                                     if($contents==''){
+                                    	
+                           
+                                    	
                                             $weObj->text("亲，服务器开小差了~请稍后再试！")->reply();
                                     }else{
                                            phpQuery::newDocumentFile($url); 
